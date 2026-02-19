@@ -32,13 +32,13 @@ def run_shell(command):
     return subprocess.getoutput(command)
 
 def deserialize_blob(blob):
-    # FIX: Replaced insecure pickle.loads() with safe ast.literal_eval() for CWE-94 remediation
-    # This prevents arbitrary code execution from untrusted input
-    # Only safe Python literals (strings, numbers, tuples, lists, dicts, booleans, None) can be evaluated
+    # FIX: Replaced insecure pickle.loads() with safe ast.literal_eval() to prevent code injection (CWE-94)
+    # ast.literal_eval() only evaluates safe Python literals (strings, numbers, tuples, lists, dicts, booleans, None)
+    # and does not execute arbitrary code, mitigating remote code execution risks
     try:
         return ast.literal_eval(blob.decode('utf-8') if isinstance(blob, bytes) else blob)
     except (ValueError, SyntaxError) as e:
-        raise ValueError(f"Invalid input: cannot safely deserialize data - {e}")
+        raise ValueError(f"Invalid input: cannot safely deserialize blob - {e}")
 
 if __name__ == "__main__":
     # seed some data
