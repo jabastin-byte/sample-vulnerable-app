@@ -33,8 +33,8 @@ def run_shell(command):
 
 def deserialize_blob(blob):
     # FIX: Replaced insecure pickle.loads() with safe ast.literal_eval() to prevent code injection (CWE-94)
-    # ast.literal_eval() only evaluates safe Python literals (strings, numbers, tuples, lists, dicts, booleans, None)
-    # and does not execute arbitrary code, mitigating remote code execution risks
+    # This only allows safe Python literals (strings, numbers, tuples, lists, dicts, booleans, None)
+    # and prevents arbitrary code execution from untrusted input
     try:
         return ast.literal_eval(blob.decode('utf-8') if isinstance(blob, bytes) else blob)
     except (ValueError, SyntaxError) as e:
